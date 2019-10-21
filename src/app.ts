@@ -1,21 +1,21 @@
-import { Message, Self, Team } from './lib/types'
 import { config } from 'dotenv'
-import { RTMClient, ErrorCode } from '@slack/rtm-api'
-import { WebClient} from '@slack/web-api'
-import { EventsHandler } from './events/handler'
-import HttpsProxyAgent from 'https-proxy-agent'
-import { CommandsRegistry } from './commands/commandsRegistry';
 config()
+import { Self, Team } from './lib/types'
+import { EventsHandler } from './events/handler'
+import { CommandsRegistry } from './commands/commandsRegistry';
+import { getSlackClients } from './utils/getSlackClients'
 
-const proxyAgent = process.env.http_proxy ? new HttpsProxyAgent(process.env.http_proxy) : null
-
-;(async () => {
+;import { ErrorCode } from '@slack/rtm-api';
+(async () => {
   // Start your app
-  const rtm = new RTMClient(process.env.SLACK_BOT_TOKEN, proxyAgent ? { agent: proxyAgent }: undefined)
-  const web = new WebClient(process.env.SLACK_BOT_TOKEN, proxyAgent ? { agent: proxyAgent } : undefined)
   try {
+    const [web, rtm] = getSlackClients()
+    const channels = await web.conversations.list({ types: 'private_channel' })
+    console.log(JSON.stringify(channels))
+    const direct = await web.im.list()
+    console.log(JSON.stringify(direct))
     const { self, team } = await rtm.start();
-    new EventsHandler(self as Self, team as Team, rtm, web)
+    await (new EventsHandler(self as Self, team as Team, rtm, web)).setup()
     console.log(EventsHandler.Commands)
     CommandsRegistry.forEach(c => c.register(EventsHandler.Commands))
     console.dir(self, team)

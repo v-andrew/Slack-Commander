@@ -15,9 +15,14 @@ export class EventsHandler {
         EventsHandler.eventsHandler = this
         this.allMessagesObs = fromEvent<Message>(rtm, 'message')
         this.userRef = `<@${self.id}>`
+    }
+    async setup() {
         const skipUserRefLn = this.userRef.length + 1
         this.commandsObs = this.allMessagesObs.pipe(
-            filter((msg) => msg.text && msg.text.startsWith(this.userRef)),
+            filter((msg) => {
+                console.log(msg)
+                return msg.text && msg.text.startsWith(this.userRef)
+            }),
             map(msg => {
                 console.log(JSON.stringify(msg))
                 const params = msg.text.substr(skipUserRefLn).split(' ')
