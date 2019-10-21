@@ -19,9 +19,11 @@
                 "clear": false
             },
             "options": {
+                "windows": {
                 "shell": {
                     "executable": "C:/Windows/System32/WindowsPowershell/v1.0/powershell.exe"
-                },
+                    },
+                }
             }
         }
     ]
