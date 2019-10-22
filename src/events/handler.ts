@@ -24,26 +24,21 @@ export class EventsHandler {
         }
         const channels = (await this.web.conversations.list({ types: 'public_channel' })).channels as Channel[]
         this.channels = channels.filter(c=>c.is_member === true).map(c=>c.id)
-        // console.log(JSON.stringify(channels))
-        const skipUserRefLn = this.userRef.length + 1
-        console.info('++ Subscribe')
-        // this.allMessagesObs = fromEventPattern<Message>(
-        //     (handler) => { /* add Handler */ this.rtm.on('message', handler)},
-        //     (handler) => { /* remove handler */ this.rtm.off('message', handler)}
-        // )
+        process.env.DEBUG > '0' && console.log('** Channels: ' + JSON.stringify(channels))
+        process.env.DEBUG > '0' && console.info('** Subscribe')
         this.allMessagesObs = fromEvent<Message>(this.rtm, 'message').pipe(
-            map(m => { console.log(`- all:${m.client_msg_id}`); return m }),
             takeUntil(this._end_),
         )
         this.commandsObs = this.allMessagesObs.pipe(
             filter((msg) => {
-                console.log(`- filter:${msg.client_msg_id}, ${msg.event_ts}, ${msg.channel}`)
+                process.env.DEBUG > '1' && console.log('** Message: ' + JSON.stringify(msg))
+                process.env.DEBUG > '0' && console.log(`- filter:${msg.client_msg_id}, ${msg.event_ts}, ${msg.channel}`)
                 if (msg.subtype && msg.subtype === 'bot_message' || !msg.text) return false
                 msg.is_direct = !this.channels.includes(msg.channel)
                 return msg.is_direct || msg.text.startsWith(this.userRef)
             }),
             map(msg => {
-                console.log('- map:'+JSON.stringify(msg))
+                process.env.DEBUG > '0' && console.log('- map:'+JSON.stringify(msg))
                 const params = msg.text.split(' ')
                 if(params[0] === this.userRef) params.shift
                 const msgInfo = (({ client_msg_id, channel, user }) => ({ client_msg_id, channel, user }))(msg)

@@ -13,18 +13,18 @@ import HttpsProxyAgent = require('https-proxy-agent');
   try {
     const [web, rtm] = getSlackClients()
     const { self, team } = await rtm.start();
-    console.dir(self, team)
+    process.env.DEBUG > '0' && console.dir(self, team)
     await (new EventsHandler(self as Self, team as Team, rtm, web)).setup()
-    console.log(`++ Setup complete for EventsHandler`)
+    process.env.DEBUG > '0' && console.log(`++ Setup complete for EventsHandler`)
     CommandsRegistry.forEach(c => c.register(EventsHandler.Commands))
-    console.log('ok')
+    console.log('started')
   } catch (error) {
     if (error.code === ErrorCode.WebsocketError) {
-      console.log(error.data);
+      console.error(error.data);
     } else { 
       // ErrorCode.RequestError ErrorCode.RateLimitedError ErrorCode.HTTPError
-      console.log('Unexpected error.')
-      console.log(error)
+      console.error('Unexpected error.')
+      console.error(error)
     }
   }
 })();
