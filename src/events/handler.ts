@@ -10,22 +10,23 @@ export class EventsHandler {
     private commandsObs: Observable<Command>
     private requestsSubj: Subject<Request>
     private repliesObs: Observable<Reply>
-    private userRef: string
     private static eventsHandler: EventsHandler = null;
     private channels: string[] = [];
     private _end_ = new Subject();
-    constructor(self: Self, private rtm: RTMClient, private web: WebClient) { 
+    constructor(private self: Self, private team: Team, private rtm: RTMClient, private web: WebClient) { 
         if (EventsHandler.eventsHandler) throw 'We can use only one EventsHandler at a time. Please dispose old EventsHandler before creating a new one'
         EventsHandler.eventsHandler = this
-        this.userRef = `<@${self.id}>`
     }
     async setup() {
         if (this.allSlackMessagesObs) {
             this._end_.next("complete")
         }
-        const channels = (await this.web.conversations.list({ types: 'public_channel' })).channels as Channel[]
-        this.channels = channels.filter(c=>c.is_member === true).map(c=>c.id)
-        process.env.DEBUG > '0' && console.log('** Channels: ' + JSON.stringify(channels))
+        const userRef: string = `<@${this.self.id}>`
+        this.web.conversations.list({ types: 'public_channel' }).then(({channels})=> {
+            process.env.DEBUG > '0' && console.log('** Channels: ' + JSON.stringify(channels))
+            this.channels = (channels as Channel[]).filter(c => c.is_member === true).map(c => c.id)
+        })
+        this.web.users.identity()
         process.env.DEBUG > '0' && console.info('** Subscribe')
         this.allSlackMessagesObs = fromEvent<Message>(this.rtm, 'message').pipe(
             takeUntil(this._end_),
@@ -40,12 +41,12 @@ export class EventsHandler {
                 }
                 if (!msg.text) return false
                 msg.is_direct = !this.channels.includes(msg.channel)
-                return msg.is_direct || msg.text.startsWith(this.userRef)
+                return msg.is_direct || msg.text.startsWith(userRef)
             }),
             map(msg => {
                 process.env.DEBUG > '0' && console.log('- map:'+JSON.stringify(msg))
-                const params = msg.text.split(' ')
-                if(params[0] === this.userRef) params.shift
+                let params = msg.text.split(' ')
+                if(params[0] === userRef || params[0].endsWith(this.self.name)) params.shift()
                 const msgInfo = (({ client_msg_id, channel, user }) => ({ client_msg_id, channel, user }))(msg)
                 const result: Command = [params.shift(), msgInfo, params]
                 return result
