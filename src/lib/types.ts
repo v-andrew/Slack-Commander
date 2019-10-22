@@ -1,3 +1,9 @@
+export type Request = {
+
+}
+export type Reply = {
+  
+}
 export type MessageInfo = {
   client_msg_id?: string
   channel: string

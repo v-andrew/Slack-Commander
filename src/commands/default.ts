@@ -19,7 +19,10 @@ export class DefaultCommand extends AbstractCommand{
             ([cmd, msgInfo, params]) => {
                 console.log(`- DefaultCommand: @${msgInfo.user}`)
                 this.reply(msgInfo, `Hello @${msgInfo.user}. "${cmd}" ` + defaultMsg)
-                if(cmd === 'DEBUG') process.env.DEBUG = params[0]
+                if (cmd === 'DEBUG') {
+                    process.env.DEBUG = params[0]
+                    console.log(`- - DEBUG set to "${params[0]}"`)
+                }
             },
             err => console.error(err)
         )
