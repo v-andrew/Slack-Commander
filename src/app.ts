@@ -13,17 +13,17 @@ import HttpsProxyAgent = require('https-proxy-agent');
   try {
     const [web, rtm] = getSlackClients()
     const { self, team } = await rtm.start();
-    await (new EventsHandler(self as Self, team as Team, rtm, web)).setup()
-    console.log(EventsHandler.Commands)
-    CommandsRegistry.forEach(c => c.register(EventsHandler.Commands))
     console.dir(self, team)
+    await (new EventsHandler(self as Self, team as Team, rtm, web)).setup()
+    console.log(`++ Setup complete for EventsHandler`)
+    CommandsRegistry.forEach(c => c.register(EventsHandler.Commands))
     console.log('ok')
   } catch (error) {
     if (error.code === ErrorCode.WebsocketError) {
       console.log(error.data);
     } else { 
       // ErrorCode.RequestError ErrorCode.RateLimitedError ErrorCode.HTTPError
-      console.log('Well, that was unexpected.')
+      console.log('Unexpected error.')
       console.log(error)
     }
   }

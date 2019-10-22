@@ -4,6 +4,7 @@ import { RTMClient } from '@slack/rtm-api';
 import { WebClient } from '@slack/web-api';
 import { filter, map, takeUntil, share, distinct, distinctUntilChanged } from 'rxjs/operators';
 import { Command } from '../lib/types';
+import { AbstractCommand } from '../commands/abstractCommand';
 
 export class EventsHandler {
     private allMessagesObs: Observable<Message>
@@ -33,26 +34,23 @@ export class EventsHandler {
         this.allMessagesObs = fromEvent<Message>(this.rtm, 'message').pipe(
             map(m => { console.log(`- all:${m.client_msg_id}`); return m }),
             takeUntil(this._end_),
-            //distinctUntilChanged((m1, m2)=>m1.client_msg_id === m2.client_msg_id),
         )
         this.commandsObs = this.allMessagesObs.pipe(
             filter((msg) => {
                 console.log(`- filter:${msg.client_msg_id}, ${msg.event_ts}, ${msg.channel}`)
-                return !(msg.subtype && msg.subtype === 'bot_message') && (msg.text && (msg.text.startsWith(this.userRef) || (msg.is_direct = !this.channels.includes(msg.channel))))
+                if (msg.subtype && msg.subtype === 'bot_message' || !msg.text) return false
+                msg.is_direct = !this.channels.includes(msg.channel)
+                return msg.is_direct || msg.text.startsWith(this.userRef)
             }),
             map(msg => {
                 console.log('- map:'+JSON.stringify(msg))
-                const params = !msg.is_direct ? msg.text.substr(skipUserRefLn).split(' ') : msg.text.split(' ')
+                const params = msg.text.split(' ')
+                if(params[0] === this.userRef) params.shift
                 const msgInfo = (({ client_msg_id, channel, user }) => ({ client_msg_id, channel, user }))(msg)
                 const result: Command = [params.shift(), msgInfo, params]
                 return result
             }),
             share(),
-        )
-        this.commandsObs.subscribe(
-            x => console.log('- commandsObs '+JSON.stringify(x)),
-            e => console.error('error', e),
-            () => console.log("- commandsObs: Complete")
         )
     }
     static async sendMessage2Conversation(conversationId: string, text: string) {

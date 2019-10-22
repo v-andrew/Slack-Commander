@@ -25,11 +25,11 @@
                 "showReuseMessage": true,
                 "clear": false
             },
-            "options": {
-                "shell": {
-                    "executable": "C:/Windows/System32/WindowsPowershell/v1.0/powershell.exe"
-                }
-            }
+            // "options": {
+            //     "shell": {
+            //         "executable": "C:/Windows/System32/WindowsPowershell/v1.0/powershell.exe"
+            //     }
+            // }
         }
     ]
 }
