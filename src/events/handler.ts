@@ -33,7 +33,11 @@ export class EventsHandler {
             filter((msg) => {
                 process.env.DEBUG > '1' && console.log('** Message: ' + JSON.stringify(msg))
                 process.env.DEBUG > '0' && console.log(`- filter:${msg.client_msg_id}, ${msg.event_ts}, ${msg.channel}`)
-                if (msg.subtype && msg.subtype === 'bot_message' || !msg.text) return false
+                if (msg.subtype) {
+                    if (msg.subtype === 'bot_message') return false
+                    if (msg.subtype === 'message_changed' && msg.message) Object.assign(msg, msg.message)
+                }
+                if (!msg.text) return false
                 msg.is_direct = !this.channels.includes(msg.channel)
                 return msg.is_direct || msg.text.startsWith(this.userRef)
             }),

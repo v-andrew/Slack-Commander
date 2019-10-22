@@ -21,6 +21,7 @@ export interface Message {
   is_starred?: true
   pinned_to?: string[]
   reactions?: Reaction[]
+  message?: Message
   edited?: {
       user: string
       ts: string
