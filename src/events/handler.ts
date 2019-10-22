@@ -33,7 +33,7 @@ export class EventsHandler {
         this.allMessagesObs = fromEvent<Message>(this.rtm, 'message').pipe(
             map(m => { console.log(`- all:${m.client_msg_id}`); return m }),
             takeUntil(this._end_),
-            distinctUntilChanged((m1, m2)=>m1.client_msg_id === m2.client_msg_id),
+            //distinctUntilChanged((m1, m2)=>m1.client_msg_id === m2.client_msg_id),
         )
         this.commandsObs = this.allMessagesObs.pipe(
             filter((msg) => {
@@ -47,6 +47,7 @@ export class EventsHandler {
                 const result: Command = [params.shift(), msgInfo, params]
                 return result
             }),
+            share(),
         )
         this.commandsObs.subscribe(
             x => console.log('- commandsObs '+JSON.stringify(x)),
