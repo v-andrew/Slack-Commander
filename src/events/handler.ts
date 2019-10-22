@@ -1,8 +1,8 @@
 import { Message, Self, Team, Event, Channel } from './../lib/types';
-import { Observable, Observer, fromEvent, Subject } from 'rxjs'
+import { Observable, Observer, fromEvent, Subject, fromEventPattern } from 'rxjs'
 import { RTMClient } from '@slack/rtm-api';
 import { WebClient } from '@slack/web-api';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { filter, map, takeUntil, share, distinct, distinctUntilChanged } from 'rxjs/operators';
 import { Command } from '../lib/types';
 
 export class EventsHandler {
@@ -26,25 +26,30 @@ export class EventsHandler {
         // console.log(JSON.stringify(channels))
         const skipUserRefLn = this.userRef.length + 1
         console.info('++ Subscribe')
+        // this.allMessagesObs = fromEventPattern<Message>(
+        //     (handler) => { /* add Handler */ this.rtm.on('message', handler)},
+        //     (handler) => { /* remove handler */ this.rtm.off('message', handler)}
+        // )
         this.allMessagesObs = fromEvent<Message>(this.rtm, 'message').pipe(
-            map(m => { console.log(`-all:${m.client_msg_id}`); return m }),
-            takeUntil(this._end_)
+            map(m => { console.log(`- all:${m.client_msg_id}`); return m }),
+            takeUntil(this._end_),
+            distinctUntilChanged((m1, m2)=>m1.client_msg_id === m2.client_msg_id),
         )
         this.commandsObs = this.allMessagesObs.pipe(
             filter((msg) => {
-                console.log(`-filter:${msg.client_msg_id}`)
-                return msg.text && (msg.text.startsWith(this.userRef) || !this.channels.includes(msg.channel))
+                console.log(`- filter:${msg.client_msg_id}, ${msg.event_ts}, ${msg.channel}`)
+                return !(msg.subtype && msg.subtype === 'bot_message') && (msg.text && (msg.text.startsWith(this.userRef) || (msg.is_direct = !this.channels.includes(msg.channel))))
             }),
             map(msg => {
-                console.log('-map'+JSON.stringify(msg))
-                const params = msg.text.substr(skipUserRefLn).split(' ')
+                console.log('- map:'+JSON.stringify(msg))
+                const params = !msg.is_direct ? msg.text.substr(skipUserRefLn).split(' ') : msg.text.split(' ')
                 const msgInfo = (({ client_msg_id, channel, user }) => ({ client_msg_id, channel, user }))(msg)
                 const result: Command = [params.shift(), msgInfo, params]
                 return result
-            })
+            }),
         )
         this.commandsObs.subscribe(
-            x => console.log(JSON.stringify(x)),
+            x => console.log('- commandsObs '+JSON.stringify(x)),
             e => console.error('error', e),
             () => console.log("- commandsObs: Complete")
         )

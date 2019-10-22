@@ -27,6 +27,7 @@ export interface Message {
   }
   user_team?: string
   source_team?: string
+  is_direct?: boolean
 }
 
 export type Reaction = {

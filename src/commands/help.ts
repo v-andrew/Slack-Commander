@@ -8,7 +8,10 @@ export class HelpCommand extends AbstractCommand{
         commands.pipe(
             filter(cmd => cmd[0].toLowerCase() === 'help')
         ).subscribe(
-            cmd => this.reply(cmd, `Hello @${cmd[1].user}`),
+            cmd => {
+                console.log(`- HelpCommand: 'Hello @${cmd[1].user}'`)
+                this.reply(cmd, `Hello @${cmd[1].user}`)
+            },
             err => console.error(err)
         )
     }
