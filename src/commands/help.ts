@@ -15,7 +15,7 @@ export class HelpCommand extends AbstractCommand{
             filter(cmd => cmd[0].toLowerCase() === command)
         ).subscribe(
             ([cmd, msgInfo, params]) => {
-                process.env.DEBUG > '0' && console.log(`- HelpCommand: 'Hello @${msgInfo.user}'`)
+                console.log(`- HelpCommand: 'Hello @${msgInfo.user}'`)
                 this.reply(msgInfo, `Hello @${msgInfo.user}. ` + helpMsg)
             },
             err => console.error(err)

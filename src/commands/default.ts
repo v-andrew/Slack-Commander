@@ -17,7 +17,7 @@ export class DefaultCommand extends AbstractCommand{
             filter(cmd => !AbstractCommand.commands.includes(cmd[0].toLowerCase()))
         ).subscribe(
             ([cmd, msgInfo, params]) => {
-                process.env.DEBUG > '0' && console.log(`- DefaultCommand: @${msgInfo.user}`)
+                console.log(`- DefaultCommand: @${msgInfo.user}`)
                 this.reply(msgInfo, `Hello @${msgInfo.user}. "${cmd}" ` + defaultMsg)
                 if(cmd === 'DEBUG') process.env.DEBUG = params[0]
             },
