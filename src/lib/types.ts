@@ -44,7 +44,36 @@ export interface Self {
     id: string
     name: string
 }
-  /*"response_metadata": {
+
+export type Channel = {
+  id: string
+  name: string
+  is_channel: boolean
+  is_group: boolean
+  is_im: boolean
+  created: number
+  is_archived: boolean
+  is_general: boolean
+  unlinked: number
+  name_normalized: string
+  is_shared: boolean
+  parent_conversation?: any,
+  creator: string
+  is_ext_shared: boolean
+  is_org_shared: boolean
+  shared_team_ids: string[],
+  pending_shared: string[],
+  pending_connected_team_ids: string[],
+  is_pending_ext_shared: boolean
+  is_member: boolean
+  is_private: boolean
+  is_mpim: boolean
+  topic: {}
+  purpose: {}
+  previous_names: string[]
+  num_members: number
+}
+/*"response_metadata": {
     "scopes": [
       "identify",
       "bot:basic"

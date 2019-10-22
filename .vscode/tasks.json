@@ -2,6 +2,13 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558 
     // for the documentation about the tasks.json format
     "version": "2.0.0",
+    "windows": {
+        "options": {
+            "shell": {
+                "executable": "C:/Windows/System32/WindowsPowershell/v1.0/powershell.exe"
+            }
+        }
+    },
     "tasks": [
         {
             "type": "typescript",
@@ -19,10 +26,8 @@
                 "clear": false
             },
             "options": {
-                "windows": {
                 "shell": {
                     "executable": "C:/Windows/System32/WindowsPowershell/v1.0/powershell.exe"
-                    },
                 }
             }
         }
