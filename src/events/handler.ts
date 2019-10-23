@@ -26,7 +26,6 @@ export class EventsHandler {
             process.env.DEBUG > '0' && console.log('** Channels: ' + JSON.stringify(channels))
             this.channels = (channels as Channel[]).filter(c => c.is_member === true).map(c => c.id)
         })
-        this.web.users.identity()
         process.env.DEBUG > '0' && console.info('** Subscribe')
         this.allSlackMessagesObs = fromEvent<Message>(this.rtm, 'message').pipe(
             takeUntil(this._end_),

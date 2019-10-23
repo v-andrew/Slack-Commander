@@ -36,7 +36,7 @@ function getSlackClients(): [WebClient, RTMClient] {
       proxyOpts.auth = process.env.U_P;
       proxyAgent = new HttpsProxyAgent(proxyOpts)
   }
-  const rtm = new RTMClient(process.env.SLACK_BOT_TOKEN, proxyAgent ? { agent: proxyAgent } : undefined)
-  const web = new WebClient(process.env.SLACK_BOT_TOKEN, proxyAgent ? { agent: proxyAgent } : undefined)
+  const rtm = new RTMClient(process.env.SLACK_BOT_TOKEN_B, proxyAgent ? { agent: proxyAgent } : undefined)
+  const web = new WebClient(process.env.SLACK_BOT_TOKEN_B, proxyAgent ? { agent: proxyAgent } : undefined)
   return [web, rtm]
 }
