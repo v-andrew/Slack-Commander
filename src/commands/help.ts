@@ -1,24 +1,16 @@
 import { AbstractCommand } from "./abstractCommand";
-import { Observable } from "rxjs";
-import { Command } from "../lib/types";
-import { filter } from 'rxjs/operators';
+import { MessageInfo } from "../lib/types";
 
 const helpMsg = `Here is the list of available commands
+\`help\` - prints this help message
 `
 const command = 'help'
 export class HelpCommand extends AbstractCommand{
     constructor() {
         super(command)
     }
-    register(commands: Observable<Command>) {
-        commands.pipe(
-            filter(cmd => cmd[0].toLowerCase() === command)
-        ).subscribe(
-            ([cmd, msgInfo, params]) => {
-                console.log(`- HelpCommand: 'Hello <@${msgInfo.user}>'`)
-                this.reply(msgInfo, `Hello <@${msgInfo.user}>. ` + helpMsg)
-            },
-            err => console.error(err)
-        )
+    async action(cmd: string, msgInfo:MessageInfo, params:string[]) {
+        console.log(`- HelpCommand: 'Hello <@${msgInfo.user}>'`)
+        await this.reply(msgInfo, `Hello <@${msgInfo.user}>. ` + helpMsg)
     }
 }

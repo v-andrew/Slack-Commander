@@ -1,7 +1,6 @@
+import { MessageInfo } from './../lib/types';
 
 import { AbstractCommand } from "./abstractCommand";
-import { Observable } from "rxjs";
-import { Command } from "../lib/types";
 import { filter } from 'rxjs/operators';
 
 const defaultMsg = `is not in a list of recognized commands.
@@ -12,19 +11,14 @@ export class DefaultCommand extends AbstractCommand{
     constructor() {
         super(command, false)
     }
-    register(commands: Observable<Command>) {
-        commands.pipe(
-            filter(cmd => !AbstractCommand.commands.includes(cmd[0].toLowerCase()))
-        ).subscribe(
-            ([cmd, msgInfo, params]) => {
-                console.log(`- DefaultCommand: <@${msgInfo.user}>`)
-                this.reply(msgInfo, `Hello <@${msgInfo.user}>.\n"${cmd}" ` + defaultMsg)
-                if (cmd === 'DEBUG') {
-                    process.env.DEBUG = params[0]
-                    console.log(`- - DEBUG set to "${params[0]}"`)
-                }
-            },
-            err => console.error(err)
-        )
+    filter = filter(cmd => !AbstractCommand.registeredCommands.includes(cmd[0].toLowerCase()))
+    async action(cmd: string, msgInfo:MessageInfo, params:string[]) {
+        console.log(`- DefaultCommand: <@${msgInfo.user}>`)
+        await this.reply(msgInfo, `Hello <@${msgInfo.user}>.\n"${cmd}" ` + defaultMsg)
+        if (cmd === 'DEBUG') {
+            process.env.DEBUG = params[0]
+            console.log(`- - DEBUG set to "${params[0]}"`)
+        }
     }
+
 }
