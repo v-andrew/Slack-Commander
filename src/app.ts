@@ -7,7 +7,6 @@ import { CommandsRegistry } from './commands/commandsRegistry'
 import { ErrorCode, RTMClient } from '@slack/rtm-api'
 import { WebClient } from '@slack/web-api'
 import HttpsProxyAgent = require('https-proxy-agent');
-
 ;(async () => {
   // Start your app
   try {
@@ -28,7 +27,6 @@ import HttpsProxyAgent = require('https-proxy-agent');
     }
   }
 })();
-
 function getSlackClients(): [WebClient, RTMClient] {
   let proxyAgent: HttpsProxyAgent = null
   if (process.env.http_proxy) {

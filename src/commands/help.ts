@@ -1,6 +1,5 @@
 import { AbstractCommand } from "./abstractCommand";
 import { MessageInfo } from "../lib/types";
-
 const helpMsg = `Here is the list of available commands
 \`help\` - prints this help message
 `

@@ -4,7 +4,6 @@ import { RTMClient } from '@slack/rtm-api';
 import { WebClient } from '@slack/web-api';
 import { filter, map, takeUntil, share } from 'rxjs/operators';
 import { Command } from '../lib/types';
-
 export class EventsHandler {
     private allSlackMessagesObs: Observable<Message>
     private commandsObs: Observable<Command>

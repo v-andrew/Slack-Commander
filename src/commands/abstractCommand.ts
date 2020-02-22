@@ -13,7 +13,6 @@ export abstract class AbstractCommand {
         try {
             await EventsHandler.sendMessage2Conversation(srcInfo.channel, message)
         } catch (ex) {
-            
         }
     }
     filter = filter(cmd => cmd[0].toLowerCase() === this.command)
