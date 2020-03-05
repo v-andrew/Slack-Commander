@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 export abstract class AbstractCommand {
     static registeredCommands: string[] = []
+    helpAndUsage = {usage:'Not implemented', command: 'abstract'}
     private readonly command:string
     constructor(command: string, register: boolean = true) {
         this.command = command

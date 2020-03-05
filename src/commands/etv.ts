@@ -6,6 +6,7 @@ import {exec} from 'child_process';
 const shellCmd = `node D:\\node\\etvnet\\dist\\app.js do=etv code=`
 const command = 'etv'
 export class EtvCommand extends AbstractCommand{
+    helpAndUsage = {usage:'`etv` `code` - registers tv device which shows `code` on the screen', command: command}
     constructor() {
         super(command)
     }
