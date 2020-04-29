@@ -1,7 +1,7 @@
 #!/bin/env node
 import { AbstractCommand } from "./abstractCommand";
 import { MessageInfo } from "../lib/types";
-import {exec} from 'child_process';
+import { getOverride, runShellCommand } from "../utils/utils";
 
 const command = 'runls'
 export class RunCommand extends AbstractCommand{
@@ -15,12 +15,8 @@ export class RunCommand extends AbstractCommand{
         console.log(`- ${cmd} Command: [${params.join(', ')}]'`)
         await this.reply(msgInfo, `<@${msgInfo.user}>. Executing RunLs`)
         try {
-            const fs = require('fs')
-            const dotenv = require('dotenv')
-            try {
-                const envConfig = dotenv.parse(fs.readFileSync('.env.override'))
-                if(envConfig['runlsCmd']) this.shellCmd = envConfig['runlsCmd']
-            } catch(ex){ console.error(ex)}
+            const overrideCmd = getOverride('runlsCmd')
+            if(overrideCmd != null) this.shellCmd = overrideCmd
             const shOut = await runShellCommand(this.shellCmd + ' ' + params.join(' '))
             await this.reply(msgInfo, `Done: ${shOut}`)
         } catch (ex) {
@@ -28,13 +24,4 @@ export class RunCommand extends AbstractCommand{
             await this.reply(msgInfo, `Error: ${ex}`)
         }
     }
-}
-
-function runShellCommand(cmd: string) {
-    return new Promise<string>((resolve, reject) => {
-        exec(cmd, function(err, stdout) {
-            if (err) return reject(err);
-            resolve(stdout);
-        });
-    });
 }

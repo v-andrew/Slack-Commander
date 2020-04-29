@@ -13,7 +13,6 @@
     "@slack/web-api": "^5.2.1",
     "dotenv": "^8.2.0",
     "https-proxy-agent": "^3.0.0",
-    "kafkajs": "^1.11.0",
     "rxjs": "^6.5.3"
   },
   "devDependencies": {
