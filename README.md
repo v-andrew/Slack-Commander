@@ -30,6 +30,7 @@ Bot supports configuration parameters in `environment` or in `.env` file.
 - `SLACK_BOT_TOKEN_B`= xoxb-
 - `SLACK_BOT_TOKEN_P`= xoxp-
 - `DEBUG`=0
+
 **For environment with proxy**
 - `NODE_TLS_REJECT_UNAUTHORIZED`=0
 - `U_P`=user:password
