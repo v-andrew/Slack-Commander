@@ -1,9 +1,9 @@
 import { AbstractCommand } from './abstractCommand';
 import { HelpCommand } from './help';
 import { DefaultCommand } from './default';
-import { EtvCommand } from './etv';
+import { RunCommand } from './run';
 export const CommandsRegistry: AbstractCommand[] = [
     new HelpCommand,
     new DefaultCommand,
-    new EtvCommand
+    new RunCommand
 ]

@@ -3,25 +3,25 @@ import { AbstractCommand } from "./abstractCommand";
 import { MessageInfo } from "../lib/types";
 import {exec} from 'child_process';
 
-const command = 'etv'
-export class EtvCommand extends AbstractCommand{
-    shellCmd = `node D:\\node\\etvnet\\dist\\app.js do=etv code=`
-    helpAndUsage = {usage:'`etv` `code` - registers tv device which shows `code` on the screen', command: command}
+const command = 'runls'
+export class RunCommand extends AbstractCommand{
+    shellCmd = `ls`
+    helpAndUsage = {usage:'`runls` `path` - executes `ls` command on the server', command: command}
     constructor() {
         super(command)
         if (process.env.shellCmd) this.shellCmd = process.env.shellCmd
     }
     async action(cmd: string, msgInfo:MessageInfo, params:string[]) {
         console.log(`- ${cmd} Command: [${params.join(', ')}]'`)
-        await this.reply(msgInfo, `<@${msgInfo.user}>. Executing Etv`)
+        await this.reply(msgInfo, `<@${msgInfo.user}>. Executing RunLs`)
         try {
             const fs = require('fs')
             const dotenv = require('dotenv')
             try {
                 const envConfig = dotenv.parse(fs.readFileSync('.env.override'))
-                if(envConfig['shellCmd']) this.shellCmd = envConfig['shellCmd']
+                if(envConfig['runlsCmd']) this.shellCmd = envConfig['runlsCmd']
             } catch(ex){ console.error(ex)}
-            const shOut = await runShellCommand(this.shellCmd + params[0])
+            const shOut = await runShellCommand(this.shellCmd + ' ' + params.join(' '))
             await this.reply(msgInfo, `Done: ${shOut}`)
         } catch (ex) {
             console.error(ex)
