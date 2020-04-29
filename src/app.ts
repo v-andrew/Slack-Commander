@@ -29,10 +29,13 @@ import HttpsProxyAgent = require('https-proxy-agent');
 })();
 function getSlackClients(): [WebClient, RTMClient] {
   let proxyAgent: HttpsProxyAgent = null
-  if (process.env.http_proxy) {
-      const proxyOpts: any = url.parse(process.env.http_proxy);
-      proxyOpts.auth = process.env.U_P;
-      proxyAgent = new HttpsProxyAgent(proxyOpts)
+  if (process.env.http_proxy && process.env.U_P) {
+    const proxyOpts: any = url.parse(process.env.http_proxy);
+    const u_p = process.env.U_P.split(':')
+    const buf = new Buffer(u_p[1], 'base64')
+    u_p[1] = buf.toString('ascii')
+    proxyOpts.auth = u_p.join(':');
+    proxyAgent = new HttpsProxyAgent(proxyOpts)
   }
   const rtm = new RTMClient(process.env.SLACK_BOT_TOKEN_B, proxyAgent ? { agent: proxyAgent } : undefined)
   const web = new WebClient(process.env.SLACK_BOT_TOKEN_B, proxyAgent ? { agent: proxyAgent } : undefined)

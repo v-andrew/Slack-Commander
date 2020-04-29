@@ -33,7 +33,7 @@ Bot supports configuration parameters in `environment` or in `.env` file.
 
 **For environment with proxy**
 - `NODE_TLS_REJECT_UNAUTHORIZED`=0
-- `U_P`=user:password
+- `U_P`=user:password - `password` should be base64 encoded
 
 ### Configuration files
 - `.env.common` - example of configuration file with actual values missing or replcated with stubs
