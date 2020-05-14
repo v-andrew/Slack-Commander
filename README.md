@@ -10,7 +10,7 @@
 1. Install dependencies `npm install`
 1. Create `classic` bot as you need `RTM` API
    1. Open https://api.slack.com/rtm
-   1. At the bottom of the page click button [Create a classic Slack app]
+   1. At the bottom of the page click button `[Create a classic Slack app]`
    1. In window `Create a Slack App (Classic)` register your Slack bot and assign it to workspace
 1. Get key `xoxb-` and add it to .env file
 1. Add permissions to a bot
